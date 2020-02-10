@@ -329,9 +329,8 @@ public class RNPushNotificationHelper {
 
             if (!bundle.containsKey("vibrate") || bundle.getBoolean("vibrate")) {
                 long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
-                if (vibration == 0)
-                    vibration = DEFAULT_VIBRATION;
-                notification.setVibrate(new long[]{0, vibration});
+                long[] vibratePattern = (bundle.containsKey("vibrate") && bundle.getBoolean("vibrate")) ? new long[]{0, vibration} : new long[]{ 0 };
+                notification.setVibrate(vibratePattern);
             }
 
             JSONArray actionsArray = null;
@@ -570,11 +569,18 @@ public class RNPushNotificationHelper {
         }
 
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, this.config.getChannelName(), importance);
-        channel.setDescription(this.config.getChannelDescription());
-        channel.enableLights(true);
-        channel.enableVibration(true);
+        long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
+        long[] vibratePattern = (bundle.containsKey("vibrate") && bundle.getBoolean("vibrate")) ? new long[]{0, vibration} : new long[]{ 0 };
 
-        manager.createNotificationChannel(channel);
+
+        channel.setDescription(this.config.getChannelDescription());	        channel.setDescription(this.config.getChannelDescription());
+        channel.enableLights(true);	        channel.enableLights(true);
+
+        channel.setVibrationPattern(vibratePattern);
+        channel.enableVibration(true);	        channel.enableVibration(true);
+
+
+        manager.createNotificationChannel(channel);	        manager.createNotificationChannel(channel);
         channelCreated = true;
     }
 }
